@@ -31,23 +31,31 @@ let formatTimestamp = (timestamp) => {
   return date.toLocaleTimeString()
 }
 let listBy = (user, {metas: metas}) => {
+  const agts = metas.map((m) => m.agent)
   return {
     user: user,
     onlineAt: formatTimestamp(metas[0].online_at),
-    agent: metas[0].agent
+    agent: metas[0].agent,
+    metas: metas
   }
 }
-
+let expand = (presence) => {
+  let ret = `<li>
+    <b>${presence.user}</b>
+    <ul>`
+  ret = ret + presence.metas.map((meta) =>
+   `<li><small>online since ${formatTimestamp(meta.online_at)}</small>
+    <br>Using: ${meta.agent}
+    </li>
+  </li>
+  `).join("")
+  ret += "</ul>"
+  return ret
+}
 let userList = document.getElementById("UserList")
 let render = (presences) => {
   userList.innerHTML = Presence.list(presences, listBy)
-    .map(presence => `
-      <li>
-        <b>${presence.user}</b>
-        <br><small>online since ${presence.onlineAt}</small>
-        <br>Using: ${presence.agent}
-      </li>
-    `)
+    .map(presence => expand(presence))
     .join("")
 }
 
@@ -55,7 +63,6 @@ let render = (presences) => {
 let room = socket.channel("room:lobby", {})
 room.on("presence_state", state => {
   presences = Presence.syncState(presences, state)
-  window.sck = socket
   render(presences)
 })
 //
