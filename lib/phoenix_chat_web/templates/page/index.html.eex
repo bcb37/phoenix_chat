@@ -14,3 +14,4 @@
     </ul>
   </div>
 </div>
+<script>window.agent = "<%= @ua %>";</script>

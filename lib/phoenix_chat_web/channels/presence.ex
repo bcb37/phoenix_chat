@@ -1,4 +1,4 @@
-defmodule PhoenixChat.Presence do
+defmodule PhoenixChatWeb.Presence do
   @moduledoc """
   Provides presence tracking to channels and processes.
 
